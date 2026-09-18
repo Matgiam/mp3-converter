@@ -42,3 +42,6 @@ next-env.d.ts
 
 # yt-dlp binary downloaded by scripts/setup-binaries.mjs
 /bin
+
+# Cookies for YouTube (YTDLP_COOKIES). This is a login: never commit it.
+cookies*.txt

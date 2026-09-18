@@ -58,8 +58,10 @@ function getStore(): Store {
     const workDir = path.join(os.tmpdir(), "mp3-converter");
     mkdirSync(workDir, { recursive: true });
     globalStore.__mp3Converter = { workDir, jobs: new Map(), queue: [], active: 0, info: new Map() };
-    setInterval(sweep, 60_000).unref();
-    void sweep();
+    // A file that can't be deleted yet (e.g. mid-download on Windows) must not crash the server.
+    const safeSweep = () => sweep().catch((err) => console.error("[cleanup]", err));
+    setInterval(safeSweep, 60_000).unref();
+    void safeSweep();
   }
   return globalStore.__mp3Converter;
 }
@@ -82,6 +84,8 @@ async function sweep() {
   }
   // Safety net for files orphaned by a crash or restart: nothing live is this old.
   for (const name of await readdir(store.workDir).catch(() => [])) {
+    // yt-dlp's working copy of YTDLP_COOKIES; it keeps the refreshed session.
+    if (name === "cookies.txt") continue;
     const file = path.join(store.workDir, name);
     const info = await stat(file).catch(() => null);
     if (info && now - info.mtimeMs > ORPHAN_AGE_MS) await rm(file, { force: true });

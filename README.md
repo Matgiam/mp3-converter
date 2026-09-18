@@ -50,7 +50,23 @@ All of these are optional environment variables:
 | `FFMPEG_PATH` | from `ffmpeg-static` | Use your own ffmpeg |
 | `MAX_DURATION_MINUTES` | `180` | Longest video accepted |
 | `MAX_CONCURRENT_JOBS` | `2` | Conversions running at the same time |
+| `YTDLP_COOKIES` | none | Path to a YouTube `cookies.txt`, used when YouTube asks the server to sign in (see below) |
 
 ## Deploying
 
-The app needs a long-running Node server that can run child processes and write to disk, so serverless hosts such as Vercel won't work. Use `npm run build && npm start` on a VPS, or put it in a container. YouTube often blocks traffic from datacenter IP addresses, so it works most reliably from a home connection.
+The app needs a long-running Node server that can run child processes and write to disk, so serverless hosts such as Vercel won't work. Use `npm run build && npm start` on a VPS, or put it in a container.
+
+### "YouTube is blocking downloads from this server"
+
+YouTube treats most cloud and datacenter IP addresses as bots and answers with *"Sign in to confirm you're not a bot"*. Nothing in the code can fix that on its own. You have two options:
+
+**1. Run it from a home connection.** Host the app on a machine at home and expose it with something like Cloudflare Tunnel or Tailscale Funnel. Home IP addresses are rarely challenged.
+
+**2. Sign the server in with cookies.**
+
+1. Use a **secondary Google account**. Google can restrict accounts used for automated downloads.
+2. Open a private/incognito window, sign in to YouTube, then open `https://www.youtube.com/robots.txt` in that same tab.
+3. Export the `youtube.com` cookies in Netscape format with a cookies.txt browser extension, then close the private window. Closing it stops YouTube from rotating the session you just exported.
+4. Upload the file to the server outside the repo, then set `YTDLP_COOKIES=/path/to/cookies.txt` and restart.
+
+The cookie file is a login to that account, so treat it like a password. Never commit it (`cookies*.txt` is git-ignored), and keep in mind that everyone using your deployed site converts through that account. When the cookies expire, the server log says so; export fresh ones and restart.
