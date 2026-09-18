@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/*
+ * A hi-fi component on a shelf: silver faceplate in light mode, black finish in dark.
+ * The VFD (vacuum fluorescent display) colours are the same in both, like the real thing.
+ */
+:root {
+  --room: #e6e8e9;
+  --plate: #d2d5d7;
+  --plate-hi: #eef0f1;
+  --plate-lo: #a9aeb2;
+  --key: #e1e4e6;
+  --key-hi: #f5f6f7;
+  --slot: #f6f7f7;
+  --ink: #24272a;
+  --ink-soft: #5b6166;
+  --engrave: rgba(255, 255, 255, 0.7);
+
+  --glass: #060c0b;
+  --vfd: #7bf3d3;
+  --vfd-glow: rgba(123, 243, 211, 0.55);
+  --vfd-dim: rgba(123, 243, 211, 0.13);
+  --rec: #f2361d;
+  --rec-glow: rgba(242, 54, 29, 0.6);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --room: #0d0e0f;
+    --plate: #1d1f21;
+    --plate-hi: #2d3033;
+    --plate-lo: #08090a;
+    --key: #282b2e;
+    --key-hi: #33373a;
+    --slot: #111214;
+    --ink: #d3d7da;
+    --ink-soft: #8a9095;
+    --engrave: rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-doto);
+}
+
+html {
+  background: var(--room);
+}
+
+body {
+  background: var(--room);
+  color: var(--ink);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
